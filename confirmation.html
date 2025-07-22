@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Confirmation de commande</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f9f9f9;
+    }
+    .confirmation-container {
+      background-color: #fff;
+      max-width: 600px;
+      margin: auto;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .confirmation-container h1 {
+      color: green;
+    }
+    .produit {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+      padding: 1rem 0;
+      gap: 1rem;
+    }
+    .produit img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .produit-info {
+      text-align: left;
+    }
+    .total {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 1.5rem;
+    }
+    .redirect-message {
+      margin-top: 1rem;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <div class="confirmation-container">
+    <h1>Merci pour votre commande !</h1>
+    <p>Voici le récapitulatif de vos articles :</p>
+    <div id="liste-produits"></div>
+    <div class="total" id="total"></div>
+    <p class="redirect-message">Redirection vers la page d'accueil dans 10 secondes...</p>
+  </div>
+
+  <script>
+    const panier = JSON.parse(localStorage.getItem("panier")) || [];
+    const listeProduits = document.getElementById("liste-produits");
+    const totalElement = document.getElementById("total");
+
+    let total = 0;
+
+    if (panier.length === 0) {
+      listeProduits.innerHTML = "<p>Votre panier était vide.</p>";
+    } else {
+      panier.forEach(produit => {
+        total += parseFloat(produit.prix);
+
+        const produitDiv = document.createElement("div");
+        produitDiv.className = "produit";
+        produitDiv.innerHTML = `
+          <img src="${produit.image}" alt="${produit.nom}">
+          <div class="produit-info">
+            <p><strong>${produit.nom}</strong></p>
+            <p>Pointure : ${produit.pointure}</p>
+            <p>${produit.prix} $</p>
+          </div>
+        `;
+        listeProduits.appendChild(produitDiv);
+      });
+
+      totalElement.textContent = `Total : ${total.toFixed(2)} $`;
+    }
+
+    localStorage.removeItem("panier");
+
+    setTimeout(() => {
+      window.location.href = "index.php";
+    }, 10000);
+  </script>
+</body>
+</html>

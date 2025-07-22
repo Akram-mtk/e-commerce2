@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mon Panier</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .acheter-btn {
+      display: block;
+      margin: 30px auto;
+      padding: 12px 30px;
+      background-color: #111;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .acheter-btn:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <h1>Mon Panier</h1>
+      <ul>
+        <li><a href="index.php">Retour à la boutique</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="products" id="panier-container"></section>
+
+  <button onclick="location.href='commande.html'" class="acheter-btn">Acheter</button>
+
+  <script>
+    let produits = JSON.parse(localStorage.getItem("panier")) || [];
+    const container = document.getElementById("panier-container");
+  
+    let total = 0;
+  
+    function afficherPanier() {
+      container.innerHTML = "";
+      total = 0;
+  
+      if (produits.length === 0) {
+        container.innerHTML = "<p>Votre panier est vide.</p>";
+        document.querySelector('.acheter-btn').style.display = "none";
+        return;
+      }
+  
+      produits.forEach((produit, index) => {
+        const div = document.createElement("div");
+        div.className = "product-card";
+        div.innerHTML = `
+          <h4>${produit.nom}</h4>
+          <img src="${produit.image}" alt="${produit.nom}">
+          <p>Pointure : ${produit.pointure}</p>
+          <p>Prix : ${produit.prix}$</p>
+          <button onclick="supprimerProduit(${index})">Supprimer</button>
+        `;
+        container.appendChild(div);
+        total += parseFloat(produit.prix);
+      });
+  
+      const totalDiv = document.createElement("div");
+      totalDiv.style.marginTop = "20px";
+      totalDiv.innerHTML = `<h3>Total : ${total.toFixed(2)} $</h3>`;
+      container.appendChild(totalDiv);
+    }
+  
+    function supprimerProduit(index) {
+      produits.splice(index, 1);
+      localStorage.setItem("panier", JSON.stringify(produits));
+      afficherPanier();
+    }
+  
+    function acheter() {
+      localStorage.removeItem("panier");
+      window.location.href = "confirmation.html";
+    }
+  
+    afficherPanier();
+  </script>  
+</body>
+</html>
+
